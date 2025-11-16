@@ -3,6 +3,7 @@ from google.adk.tools import FunctionTool
 
 from ..config import MODEL
 from ..tools.extraction_tools import doc_report_to_csv, csv_to_records
+from ..state.state import Records
 
 report_extraction_agent = Agent(
     name="ReportExtractionAgent",
@@ -18,6 +19,6 @@ report_extraction_agent = Agent(
         FunctionTool(func=csv_to_records)
     ],
     # 이 에이전트의 출력이 다음 에이전트의 입력으로 사용될 수 있도록 상태 키를 매핑합니다.
-    output_key="records",  # 현재 세션의 state 객체에 'records' 키로 저장됩니다. 근데 이모티콘 막 있고 몇 문단에 거친 LLM의 출력 그 자체를 state 객체의 reords로 저장해버림. 이를 방지하려면 schema로 저장하는게 맞을듯.
+    output_schema=Records,  # 현재 세션의 state 객체에 'records' 키로 저장됩니다. 근데 이모티콘 막 있고 몇 문단에 거친 LLM의 출력 그 자체를 state 객체의 reords로 저장해버림. 이를 방지하려면 schema로 저장하는게 맞을듯.
     include_contents='none',
 )

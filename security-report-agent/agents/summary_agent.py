@@ -1,6 +1,7 @@
 from google.adk.agents import Agent
 
 from ..config import MODEL
+from ..state.state import RiskAssessment
 
 summary_agent = Agent(
     name="SummaryAgent",
@@ -18,10 +19,8 @@ summary_agent = Agent(
     "금월 보안 관제 보고서 분석 결과, 전반적인 위협 수준은 '주의' 단계입니다. 이는 악성코드로 의심되는 IP에서 내부 자산을 대상으로 한 원격 데스크톱(RDP) 접근 시도가 여러 차례 발견되었기 때문입니다. 해당 IP를 즉시 차단하고, 관련 서버의 외부 접근 정책을 긴급 점검할 것을 권고합니다."
 
     위 예시와 같은 형식으로, 입력된 'risk' 데이터에 맞게 자연스러운 요약문을 생성하여 출력하십시오.
-    
-    ## risk
-    {risk}
     """,
     tools=[],
+    input_schema=RiskAssessment,
     include_contents='none',
 )

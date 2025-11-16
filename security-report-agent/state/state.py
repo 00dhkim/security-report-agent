@@ -7,6 +7,9 @@ class ReportRecord(BaseModel):
     dst_port: Optional[int] = None
     count: Optional[int] = None
 
+class Records(BaseModel):
+    records: List[ReportRecord] = []
+
 class ThreatInfo(BaseModel):
     # IP/포트 단위 위협 정보
     ip: Optional[str] = None
@@ -17,23 +20,11 @@ class ThreatInfo(BaseModel):
     sources: List[str] = []          # VT, AbuseIPDB, InternalDB 등
     detail_url: Optional[str] = None
 
+class RecordsAndThreats(BaseModel):
+    records: List[ReportRecord] = []
+    threats: List[ThreatInfo] = []
+
 class RiskAssessment(BaseModel):
     overall_level: str              # "정상", "주의", "위험"
     key_findings: List[str]         # 중요한 포인트 문장 리스트
     recommended_actions: List[str]  # 권고 조치
-
-#TODO: 지금 참조되지 않고 있다
-class MonthlySocState(BaseModel):
-    # 입력
-    report_path: Optional[str] = None          # doc 파일 경로 또는 ID
-    report_csv_text: Optional[str] = None      # CSV 형태의 원문 (문자열)
-    records: List[ReportRecord] = []        # 파싱된 레코드 목록
-
-    # 위협 검색 결과
-    threats: List[ThreatInfo] = []          # IP/포트별 위협 정보
-
-    # 리스크 판단
-    risk: Optional[RiskAssessment] = None      # 보안 전문가 관점 리스크 요약
-
-    # 최종 결과
-    final_summary_ko: Optional[str] = None     # 한 문단 한국어 요약

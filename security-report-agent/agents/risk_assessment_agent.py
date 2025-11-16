@@ -1,6 +1,7 @@
 from google.adk.agents import Agent
 
 from ..config import MODEL
+from ..state.state import RecordsAndThreats, RiskAssessment
 
 risk_assessment_agent = Agent(
     name="RiskAssessmentAgent",
@@ -29,15 +30,10 @@ risk_assessment_agent = Agent(
     }}
     
     'key_findings'와 'recommended_actions'은 구체적인 IP, 포트, 횟수를 포함하여 1~3개의 핵심적인 문장으로 작성하십시오.
-    
-    ## records
-    {records}
-    
-    ## threats
-    {threats}
     """,
     # 이 에이전트는 외부 도구 없이 LLM의 추론 능력만을 사용합니다.
     tools=[],
-    output_key="risk",
+    input_schema=RecordsAndThreats,
+    output_schema=RiskAssessment,
     include_contents='none',
 )
