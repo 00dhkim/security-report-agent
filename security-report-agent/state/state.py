@@ -14,6 +14,7 @@ class ThreatInfo(BaseModel):
     # IP/포트 단위 위협 정보
     ip: Optional[str] = None
     port: Optional[int] = None
+    reputation: Optional[int] = None
     is_malicious: Optional[bool] = None
     threat_level: Optional[str] = None  # "low", "medium", "high", "unknown"
     categories: List[str] = []       # "botnet", "scanner", "bruteforce" 등
