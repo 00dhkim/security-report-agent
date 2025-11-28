@@ -2,4 +2,6 @@
 # MODEL_NAME = "gemini-2.5-flash"
 
 from google.adk.models.lite_llm import LiteLlm
-MODEL = LiteLlm(model="friendliai/Qwen/Qwen3-235B-A22B-Instruct-2507")
+from google.adk.models.google_llm import Gemini
+# MODEL = LiteLlm(model="friendliai/Qwen/Qwen3-235B-A22B-Instruct-2507")
+MODEL = Gemini(model="gemini-2.5-flash")
