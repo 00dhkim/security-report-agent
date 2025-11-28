@@ -1,28 +1,44 @@
 import csv
 import io
+import subprocess
+import os
+from docx import Document
 from typing import List, Dict, Any
 
-def doc_report_to_csv(report_path: str) -> Dict[str, str]:
+def _convert_doc_to_docx(doc_path):
+    output_dir = os.path.dirname(doc_path)
+    subprocess.run(["libreoffice", "--headless", "--convert-to", "docx", doc_path, "--outdir", output_dir])
+    return doc_path.replace(".doc", ".docx")
+
+def _parse_docx_tables(path):
+    doc = Document(path)
+    all_text = []
+
+    # 본문 텍스트
+    for para in doc.paragraphs:
+        all_text.append(para.text)
+
+    # 테이블 텍스트
+    for table in doc.tables:
+        for row in table.rows:
+            row_text = [cell.text.strip().replace(",", "") for cell in row.cells]
+            all_text.append(",".join(row_text))
+        all_text.append("")  # 테이블 간 구분을 위해 빈 줄 추가
+
+    return "\n".join(all_text)
+
+def doc_report_parser(report_path: str) -> Dict[str, str]:
     """
-    월간 보안 관제 doc 보고서 파일을 파싱하여 src_ip, dst_ip, dst_port, count 컬럼을 가진 CSV 텍스트로 변환합니다.
-    (이것은 실제 .doc 파일 파서를 시뮬레이션하는 모의 함수입니다.)
+    월간 보안 관제 doc 보고서 파일을 파싱하여 일반 본문과 No,Src IP,Dest IP,Port,Count 컬럼 등을 포함한 문자열을 반환합니다.
     """
-    # TODO: 실제 .doc 파일 파싱 로직 구현이 필요합니다.
-    # 현재는 고정된 모의 CSV 데이터를 반환하고 있습니다.
-    # 'python-docx' 라이브러리를 사용하여 'report_path'의 파일을 열고,
-    # 테이블 또는 텍스트에서 정해진 포맷에 따라 데이터를 추출하는 코드를 작성해야 합니다.
-    print(f" MOCK: doc_report_to_csv(report_path='{report_path}')")
-    # 여기서는 항상 고정된 CSV 문자열을 반환합니다.
-    mock_csv_data = (
-        "src_ip,dst_ip,dst_port,count\n"
-        "192.168.1.10,8.8.8.8,53,150\n"
-        "10.0.0.5,203.0.113.1,22,5\n"
-        "192.168.1.12,198.51.100.2,443,2000\n"
-        "1.2.3.4,10.0.0.5,3389,12\n"
-        "203.0.113.1,192.168.1.10,80,80\n"
-        "111.222.111.222,10.0.0.5,22,2\n"
-    )
-    return {"csv_text": mock_csv_data}
+    
+    docx_path = _convert_doc_to_docx(report_path)
+    parsed_text = _parse_docx_tables(docx_path)
+    os.remove(docx_path) # remove the converted docx file
+
+    print(f"doc extraction result:\n{parsed_text[:50]}...")
+
+    return {"csv_text": parsed_text}
 
 def csv_to_records(csv_text: str) -> Dict[str, List[Dict[str, Any]]]:
     """
