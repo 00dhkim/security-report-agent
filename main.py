@@ -1,5 +1,5 @@
 def main():
-    print("Hello from security-report-agent!")
+    print("Hello from security_report_agent!")
 
 
 if __name__ == "__main__":
