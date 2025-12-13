@@ -4,7 +4,6 @@ import os
 import time
 import urllib.error
 import urllib.request
-from functools import lru_cache
 from typing import Any, Dict, Optional
 
 from dotenv import load_dotenv
@@ -127,71 +126,5 @@ def ip_lookup(ip: str) -> Dict[str, Any]:
         "threat_level": "unknown",
         "categories": [],
         "sources": [],
-        "detail_url": None,
-    }
-
-
-@lru_cache(maxsize=1)
-def _port_service_index() -> Dict[int, str]:
-    index: Dict[int, str] = {}
-    try:
-        with open("/etc/services", "r", encoding="utf-8", errors="ignore") as f:
-            for line in f:
-                # 주석 제거 후 처리
-                line = line.split("#", 1)[0].strip()
-                if not line:
-                    continue
-                parts = line.split()
-                if len(parts) < 2 or "/" not in parts[1]:
-                    continue
-                port_part, _proto = parts[1].split("/", 1)
-                if not port_part.isdigit():
-                    continue
-                port_num = int(port_part)
-                # 이미 등록된 포트는 덮어쓰지 않고 최초 값 유지
-                index.setdefault(port_num, parts[0])
-    except OSError:
-        pass
-    return index
-
-
-def _classify_port(port: int, service_name: Optional[str]) -> Dict[str, Any]:
-    service = (service_name or "").lower()
-
-    if port in {3389, 5900, 5985, 5986, 23} or "rdp" in service or "vnc" in service:
-        return {"threat_level": "high", "categories": ["remote access", "exploit target" if port == 3389 else "bruteforce target"]}
-    if port == 22 or "ssh" in service:
-        return {"threat_level": "medium", "categories": ["remote access", "bruteforce target"]}
-    if port in {445, 139, 135} or "smb" in service or "netbios" in service:
-        return {"threat_level": "high", "categories": ["lateral movement", "ransomware target"]}
-    if port in {21, 990} or "ftp" in service:
-        return {"threat_level": "medium", "categories": ["file transfer", "bruteforce target"]}
-    if port in {80, 443, 8080, 8443, 8000} or "http" in service or "https" in service:
-        return {"threat_level": "low", "categories": ["web"]}
-    if port == 53 or "dns" in service:
-        return {"threat_level": "low", "categories": ["DNS"]}
-    if port in {1433, 1521, 3306, 5432, 6379, 27017} or any(db in service for db in ["sql", "mongo", "redis", "db"]):
-        return {"threat_level": "medium", "categories": ["database"]}
-
-    return {
-        "threat_level": "low" if service else "unknown",
-        "categories": [service] if service else [],
-    }
-
-
-def port_lookup(port: int) -> Dict[str, Any]:
-    """
-    단일 포트 번호가 알려진 고위험 서비스 또는 공격 벡터에 해당하는지 조회합니다.
-    """
-    service_name = _port_service_index().get(port)
-    classification = _classify_port(port, service_name)
-    sources = ["etc/services"] if service_name else []
-
-    return {
-        "port": port,
-        "is_malicious": None,
-        "threat_level": classification["threat_level"],
-        "categories": classification["categories"],
-        "sources": sources,
         "detail_url": None,
     }

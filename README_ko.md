@@ -71,23 +71,26 @@
 
 에이전트를 설정하고 실행하려면 다음 단계를 따르세요.
 
-1.  **사전 요구사항**:
-    *   Python 3.12 이상이 설치되어 있어야 합니다.
-    *   `uv`가 설치되어 있어야 합니다. 없다면 `pip install uv`를 실행하세요.
+### 1. 환경 설정
 
-2.  **리포지토리 클론**:
-    ```bash
-    git clone https://github.com/00dhkim/security-report-agent.git
-    cd security-report-agent
-    ```
+이 프로젝트는 Python 3.12 이상 버전을 필요로 하며, 의존성 관리를 위해 `uv`를 사용합니다.
+또한, `.doc` 파일 처리를 위해 **LibreOffice**가 필요합니다.
 
-3.  **의존성 설치**:
-    `uv`를 사용하여 가상 환경을 만들고 `pyproject.toml`의 의존성을 동기화합니다.
-    ```bash
-    uv sync
-    source .venv/bin/activate
-    ```
-    이 명령어는 `.venv` 디렉토리가 없다면 생성하고 필요한 패키지를 설치합니다.
+#### 시스템 패키지 설치 (Ubuntu/Debian)
+```bash
+sudo apt install libreoffice
+```
+
+#### 프로젝트 설정
+```bash
+# 1. 저장소 클론
+git clone https://github.com/00dhkim/security-report-agent.git
+cd security-report-agent
+
+# 2. 가상환경 생성 및 의존성 설치
+uv sync
+source .venv/bin/activate
+```
 
 4.  **환경 변수**:
     `security_report_agent/` 디렉토리에 `.env` 파일을 생성합니다. 그 다음, 필요한 설정 값(예: API 키)을 입력합니다.

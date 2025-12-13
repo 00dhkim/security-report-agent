@@ -8,9 +8,9 @@ from ..state.state import Records
 report_extraction_agent = Agent(
     name="ReportExtractionAgent",
     model=MODEL,
-    description="월간 보안 관제 보고서 doc 파일을 파싱하여 CSV와 정형화된 레코드 리스트로 변환합니다.",
+    description="월간 보안 관제 보고서 doc/docx 파일(경로 또는 업로드)을 파싱하여 CSV와 정형화된 레코드 리스트로 변환합니다.",
     instruction="""당신은 보고서 추출 전문가입니다.
-    1. 'doc_report_parser' 도구를 사용하여 주어진 'report_path'에서 텍스트를 추출하십시오.
+    1. 'doc_report_parser' 도구를 사용하여 텍스트를 추출하십시오. 사용자가 파일을 업로드한 경우 'report_path' 인자를 생략하여 업로드된 파일을 처리하십시오. 경로가 주어진 경우에만 'report_path'를 사용하십시오.
     2. 추출된 텍스트를 레코드 스키마에 맞게 적절히 변환하여 'records' 키로 출력하십시오.
 
 

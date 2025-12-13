@@ -77,6 +77,10 @@ Follow these steps to configure and run the agent.
 
    * Python 3.12+
    * `uv` installed (`pip install uv` if not installed)
+   * **LibreOffice** (Required for `.doc` file processing)
+     ```bash
+     sudo apt install libreoffice  # For Ubuntu/Debian
+     ```
 
 2. **Clone the repository:**
 
